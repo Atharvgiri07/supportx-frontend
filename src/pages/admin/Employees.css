@@ -1,0 +1,65 @@
+.employees-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.employees-table th,
+.employees-table td {
+  text-align: left;
+  padding: 12px 20px;
+  font-size: 14px;
+}
+
+.employees-table th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.employees-table tbody tr {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.employees-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.employees-score {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.employees-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.employees-status.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.employees-status.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.employees-dept-select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  font-size: 13px;
+  font-family: var(--font-body);
+  background: white;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.employees-dept-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

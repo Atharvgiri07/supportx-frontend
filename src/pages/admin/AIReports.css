@@ -1,0 +1,36 @@
+.ai-reports-form {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  padding: 24px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.ai-reports-form select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  font-size: 14px;
+  font-family: var(--font-body);
+  background: white;
+}
+
+.ai-reports-loading {
+  padding: 24px;
+  text-align: center;
+}
+
+.ai-reports-result {
+  padding: 24px;
+}
+
+.ai-reports-text {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--color-text);
+  margin: 0;
+}

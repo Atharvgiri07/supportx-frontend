@@ -1,0 +1,63 @@
+.all-tickets-filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.all-tickets-filters select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  font-size: 14px;
+  font-family: var(--font-body);
+  background: white;
+}
+
+.all-tickets-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.all-tickets-table th,
+.all-tickets-table td {
+  text-align: left;
+  padding: 12px 20px;
+  font-size: 14px;
+}
+
+.all-tickets-table th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.all-tickets-table tbody tr {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.all-tickets-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.all-tickets-link {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.all-tickets-link:hover {
+  color: var(--color-primary);
+}
+
+.all-tickets-delete {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.all-tickets-delete:hover {
+  color: var(--color-danger);
+}

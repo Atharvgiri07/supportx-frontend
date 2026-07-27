@@ -1,0 +1,60 @@
+.dept-form {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  padding: 20px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.dept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.dept-card {
+  padding: 18px;
+}
+
+.dept-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dept-delete {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.dept-delete:hover {
+  color: var(--color-danger);
+}
+
+.dept-card-desc {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 8px 0;
+}
+
+.dept-card-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-top: 8px;
+}
+
+.dept-employee-list {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.dept-employee-list li {
+  margin-bottom: 4px;
+}

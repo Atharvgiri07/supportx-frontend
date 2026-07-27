@@ -1,0 +1,13 @@
+.create-ticket-form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.create-ticket-result {
+  margin-top: 16px;
+  padding: 16px 20px;
+  font-size: 14px;
+  background: #eff6ff;
+  border-color: var(--color-primary);
+}
