@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Analytics } from '@vercel/analytics/react';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
@@ -144,6 +145,7 @@ function App() {
           </Routes>
         </AppShell>
         <ToastContainer position="top-right" autoClose={3000} />
+        <Analytics />
       </BrowserRouter>
     </AuthProvider>
   );
