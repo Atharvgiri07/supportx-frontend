@@ -28,7 +28,7 @@
 }
 
 .sidebar-link.active {
-  background: #eff6ff;
+  background: var(--color-primary-tint);
   color: var(--color-primary);
   border-left-color: var(--color-primary);
 }

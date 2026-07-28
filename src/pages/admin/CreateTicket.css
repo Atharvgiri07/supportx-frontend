@@ -8,6 +8,6 @@
   margin-top: 16px;
   padding: 16px 20px;
   font-size: 14px;
-  background: #eff6ff;
+  background: var(--color-primary-tint);
   border-color: var(--color-primary);
 }

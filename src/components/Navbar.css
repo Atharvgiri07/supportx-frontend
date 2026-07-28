@@ -37,6 +37,7 @@
   border-radius: 999px;
 }
 
+.navbar-theme-toggle,
 .navbar-logout {
   background: transparent;
   border: none;
@@ -45,8 +46,10 @@
   display: flex;
   align-items: center;
   opacity: 0.8;
+  transition: opacity 0.15s ease;
 }
 
+.navbar-theme-toggle:hover,
 .navbar-logout:hover {
   opacity: 1;
 }
