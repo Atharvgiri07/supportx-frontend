@@ -20,17 +20,20 @@ import Employees from './pages/admin/Employees';
 import AllTickets from './pages/admin/AllTickets';
 import AIReports from './pages/admin/AIReports';
 
+import { useState } from 'react';
+
 const AppShell = ({ children }) => {
   const { user } = useAuth();
   const location = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   if (!user) return children; // Login/Register render with no chrome
 
   return (
     <>
-      <Navbar />
+      <Navbar onMobileMenuToggle={() => setMobileOpen((prev) => !prev)} />
       <div className="app-body">
-        <Sidebar />
+        <Sidebar mobileOpen={mobileOpen} onCloseMobile={() => setMobileOpen(false)} />
         <main className="app-content" key={location.pathname}>
           {children}
         </main>
@@ -38,6 +41,7 @@ const AppShell = ({ children }) => {
     </>
   );
 };
+
 
 // Admins land on the Dashboard; employees land on their quick-links Home
 const RoleHome = () => {

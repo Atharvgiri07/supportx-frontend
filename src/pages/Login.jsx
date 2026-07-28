@@ -32,10 +32,13 @@ const Login = () => {
     <div className="auth-screen">
       <div className="auth-card card">
         <div className="auth-brand">
-          <FiZap size={22} />
-          SupportX
+          <div className="auth-logo-badge">
+            <FiZap size={22} />
+          </div>
+          <span>SupportX</span>
         </div>
         <p className="auth-tagline">Manage smarter. Resolve faster.</p>
+
 
         <form onSubmit={handleSubmit}>
           <div className="field">

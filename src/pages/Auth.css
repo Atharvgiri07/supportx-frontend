@@ -6,25 +6,28 @@
   padding: 24px;
   position: relative;
   overflow: hidden;
-  background: radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.1), transparent 45%),
-    radial-gradient(circle at 85% 85%, rgba(30, 41, 59, 0.08), transparent 45%);
+  background: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.12), transparent 45%),
+    radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.1), transparent 45%),
+    var(--color-bg);
 }
 
 .auth-card {
   width: 100%;
-  max-width: 400px;
-  padding: 40px 36px;
+  max-width: 420px;
+  padding: 44px 38px;
   text-align: center;
   position: relative;
   z-index: 1;
-  animation: fadeSlideUp 0.4s ease;
+  border-radius: 16px;
+  box-shadow: var(--shadow-dropdown);
+  animation: fadeSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .auth-brand {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 28px;
@@ -32,11 +35,23 @@
   letter-spacing: -0.02em;
 }
 
+.auth-logo-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--color-primary), #6366f1);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+}
+
 .auth-tagline {
   color: var(--color-text-muted);
   font-size: 14px;
-  margin-top: 4px;
-  margin-bottom: 28px;
+  margin-top: 6px;
+  margin-bottom: 30px;
 }
 
 .auth-card form {
@@ -44,7 +59,7 @@
 }
 
 .auth-switch {
-  margin-top: 20px;
+  margin-top: 24px;
   font-size: 14px;
   color: var(--color-text-muted);
 }
@@ -52,4 +67,11 @@
 .auth-switch a {
   color: var(--color-primary);
   font-weight: 600;
+  transition: color 0.15s ease;
 }
+
+.auth-switch a:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
