@@ -1,47 +1,47 @@
-.all-tickets-toolbar {
+.all-tickets-header-row {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   flex-wrap: wrap;
+  gap: 16px;
 }
 
-.search-box {
-  position: relative;
-  flex: 1;
-  min-width: 260px;
-}
-
-.search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--color-text-muted);
-  pointer-events: none;
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px 12px 10px 36px;
-  border-radius: 8px;
-  border: 1px solid var(--color-border);
-  font-size: 14px;
-  font-family: var(--font-body);
-  background: var(--color-surface);
-  color: var(--color-text);
-  outline: none;
-  transition: border-color 0.15s ease;
-}
-
-.search-input:focus {
-  border-color: var(--color-primary);
+.export-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .all-tickets-filters {
   display: flex;
   gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.all-tickets-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  flex: 1;
+  min-width: 200px;
+}
+
+.all-tickets-search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  width: 100%;
 }
 
 .all-tickets-filters select {
@@ -51,7 +51,6 @@
   font-size: 14px;
   font-family: var(--font-body);
   background: var(--color-surface);
-  color: var(--color-text);
 }
 
 .all-tickets-table {
@@ -62,7 +61,7 @@
 .all-tickets-table th,
 .all-tickets-table td {
   text-align: left;
-  padding: 14px 20px;
+  padding: 12px 20px;
   font-size: 14px;
 }
 
@@ -72,16 +71,10 @@
   letter-spacing: 0.03em;
   color: var(--color-text-muted);
   border-bottom: 1px solid var(--color-border);
-  background: var(--color-bg);
 }
 
 .all-tickets-table tbody tr {
   border-bottom: 1px solid var(--color-border);
-  transition: background-color 0.15s ease;
-}
-
-.all-tickets-table tbody tr:hover {
-  background: var(--color-bg);
 }
 
 .all-tickets-table tbody tr:last-child {
@@ -103,65 +96,69 @@
   color: var(--color-text-muted);
   cursor: pointer;
   padding: 4px;
-  border-radius: 4px;
-  transition: color 0.15s ease, background-color 0.15s ease;
 }
 
 .all-tickets-delete:hover {
   color: var(--color-danger);
-  background: var(--color-bg);
 }
 
-/* Pagination styles */
-.pagination-bar {
+/* Overdue dot */
+.overdue-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-danger);
+  flex-shrink: 0;
+}
+
+/* Quick Actions */
+.quick-actions {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 20px;
-  border-top: 1px solid var(--color-border);
-  background: var(--color-surface);
-  flex-wrap: wrap;
-  gap: 12px;
+  gap: 6px;
 }
 
-.pagination-info {
-  font-size: 13px;
-  color: var(--color-text-muted);
-}
-
-.pagination-controls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.btn-pagination {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-size: 13px;
-  font-weight: 500;
+.action-btn {
+  background: none;
+  border: none;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  padding: 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.btn-pagination:hover:not(:disabled) {
-  background: var(--color-bg);
+.action-resolve {
+  color: var(--color-success);
+}
+.action-resolve:hover {
+  background-color: rgba(34, 197, 94, 0.1);
 }
 
-.btn-pagination:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+.action-close {
+  color: var(--color-primary);
+}
+.action-close:hover {
+  background-color: rgba(59, 130, 246, 0.1);
 }
 
-.pagination-page {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-text-muted);
+.action-delete {
+  color: var(--color-danger);
+}
+.action-delete:hover {
+  background-color: rgba(239, 68, 68, 0.1);
 }
 
+@media (max-width: 768px) {
+  .all-tickets-table th:nth-child(3),
+  .all-tickets-table td:nth-child(3),
+  .all-tickets-table th:nth-child(6),
+  .all-tickets-table td:nth-child(6) {
+    display: none;
+  }
+  .all-tickets-table th,
+  .all-tickets-table td {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+}

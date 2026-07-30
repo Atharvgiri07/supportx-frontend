@@ -39,6 +39,7 @@
   gap: 20px;
   font-size: 13px;
   color: var(--color-text-muted);
+  flex-wrap: wrap;
 }
 
 .ticket-detail-comments {
@@ -58,9 +59,166 @@
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .comment-text {
   font-size: 14px;
   color: var(--color-text);
+}
+
+.comment-resolution {
+  border-left: 3px solid var(--color-success);
+  padding-left: 12px;
+  margin-left: -3px;
+}
+
+.comment-resolution-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-success);
+  background: rgba(34, 197, 94, 0.12);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.comment-resolution-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+
+.comment-resolution-checkbox input {
+  cursor: pointer;
+}
+
+/* AI Reply Suggestions */
+.ai-reply-suggestions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.ai-suggestion-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-primary);
+}
+
+.ai-suggestion-chip {
+  background: var(--color-primary-tint);
+  color: var(--color-primary);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 99px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ai-suggestion-chip:hover {
+  background: var(--color-primary);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* Admin Controls */
+.admin-status-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.status-select {
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-card);
+  color: var(--color-text);
+}
+
+/* Badge for overdue */
+.badge-overdue {
+  background-color: var(--color-danger);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Timeline */
+.ticket-detail-history {
+  margin-top: 20px;
+  padding: 24px;
+}
+
+.history-timeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-left: 20px;
+}
+
+.history-timeline::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--color-border);
+}
+
+.history-entry {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.history-entry:last-child {
+  margin-bottom: 0;
+}
+
+.history-dot {
+  position: absolute;
+  left: -20px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  border: 2px solid var(--color-bg-card);
+}
+
+.history-date {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-bottom: 2px;
+}
+
+.history-desc {
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.history-notes {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+  font-style: italic;
 }

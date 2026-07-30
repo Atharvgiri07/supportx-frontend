@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../utils/api';
 import Loader from '../../components/Loader';
+import { exportToCSV, printReport } from '../../utils/exportUtils';
+import { FiDownload, FiPrinter } from 'react-icons/fi';
 import './Employees.css';
+
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
@@ -37,14 +40,42 @@ const Employees = () => {
     }
   };
 
-  if (loading) return <Loader />;
+  const handleExportCSV = () => {
+    const data = employees.map((emp) => ({
+      Name: emp.name,
+      Email: emp.email,
+      Department: emp.department?.name || 'Unassigned',
+      OpenTickets: emp.currentOpen,
+      ResolvedTickets: emp.totalResolved,
+      PerformanceScore: emp.performanceScore,
+      Status: emp.isActive ? 'Active' : 'Inactive',
+    }));
+    exportToCSV(data, 'employees-performance-report.csv');
+    toast.success('Employees report exported');
+  };
+
+  if (loading) return <Loader type="table" count={5} />;
 
   return (
     <div>
-      <h1>Employees</h1>
-      <p style={{ color: 'var(--color-text-muted)', marginTop: 4, marginBottom: 24 }}>
-        Your team, ranked by performance. Assign a department so they're eligible for auto-assign.
-      </p>
+      <div className="all-tickets-header-row">
+        <div>
+          <h1>Employees</h1>
+          <p style={{ color: 'var(--color-text-muted)', marginTop: 4 }}>
+            Your team, ranked by performance. Assign a department so they're eligible for auto-assign.
+          </p>
+        </div>
+
+        <div className="export-btn-group">
+          <button className="btn btn-secondary btn-sm" onClick={handleExportCSV}>
+            <FiDownload size={15} /> Export CSV
+          </button>
+          <button className="btn btn-secondary btn-sm" onClick={printReport}>
+            <FiPrinter size={15} /> Print
+          </button>
+        </div>
+      </div>
+
 
       <div className="card">
         <table className="employees-table">

@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 import api from '../../utils/api';
+import { useAuth } from '../../context/AuthContext';
 import TicketCard from '../../components/TicketCard';
 import Loader from '../../components/Loader';
 
 const MyTickets = () => {
+  const { user } = useAuth();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -21,6 +24,10 @@ const MyTickets = () => {
     };
     fetchTickets();
   }, []);
+
+  // Admins don't get tickets auto-assigned to them — send them to the real
+  // ticket list instead of a page that will always be empty for their account.
+  if (user?.role === 'admin') return <Navigate to="/all-tickets" replace />;
 
   if (loading) return <Loader />;
 

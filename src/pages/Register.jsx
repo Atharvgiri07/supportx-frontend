@@ -35,13 +35,10 @@ const Register = () => {
     <div className="auth-screen">
       <div className="auth-card card">
         <div className="auth-brand">
-          <div className="auth-logo-badge">
-            <FiZap size={22} />
-          </div>
-          <span>SupportX</span>
+          <FiZap size={22} />
+          SupportX
         </div>
         <p className="auth-tagline">Create your account</p>
-
 
         <form onSubmit={handleSubmit}>
           <div className="field">

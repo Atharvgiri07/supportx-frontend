@@ -9,6 +9,7 @@ import Sidebar from './components/Sidebar';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
+import Landing from './pages/Landing';
 import MyTickets from './pages/employee/MyTickets';
 import TicketDetail from './pages/employee/TicketDetail';
 import MyPerformance from './pages/employee/MyPerformance';
@@ -20,20 +21,17 @@ import Employees from './pages/admin/Employees';
 import AllTickets from './pages/admin/AllTickets';
 import AIReports from './pages/admin/AIReports';
 
-import { useState } from 'react';
-
 const AppShell = ({ children }) => {
   const { user } = useAuth();
   const location = useLocation();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   if (!user) return children; // Login/Register render with no chrome
 
   return (
     <>
-      <Navbar onMobileMenuToggle={() => setMobileOpen((prev) => !prev)} />
+      <Navbar />
       <div className="app-body">
-        <Sidebar mobileOpen={mobileOpen} onCloseMobile={() => setMobileOpen(false)} />
+        <Sidebar />
         <main className="app-content" key={location.pathname}>
           {children}
         </main>
@@ -42,11 +40,12 @@ const AppShell = ({ children }) => {
   );
 };
 
-
-// Admins land on the Dashboard; employees land on their quick-links Home
-const RoleHome = () => {
-  const { user } = useAuth();
-  return user?.role === 'admin' ? <Dashboard /> : <Home />;
+// "/" is public: visitors see the Landing page, logged-in users see their real home
+const RootRoute = () => {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (!user) return <Landing />;
+  return user.role === 'admin' ? <Dashboard /> : <Home />;
 };
 
 function App() {
@@ -58,14 +57,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <RoleHome />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/" element={<RootRoute />} />
             <Route
               path="/tickets"
               element={

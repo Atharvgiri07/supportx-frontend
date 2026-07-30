@@ -1,9 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { 
-  FiInbox, FiAward, FiBarChart2, FiGrid, FiPlusCircle, 
-  FiFolder, FiUsers, FiList, FiCpu, FiChevronLeft, FiChevronRight 
+import {
+  FiInbox,
+  FiAward,
+  FiBarChart2,
+  FiGrid,
+  FiPlusCircle,
+  FiFolder,
+  FiUsers,
+  FiList,
+  FiCpu,
+  FiChevronLeft,
+  FiChevronRight,
 } from 'react-icons/fi';
 import './Sidebar.css';
 
@@ -23,62 +32,38 @@ const ADMIN_LINKS = [
   { to: '/leaderboard', label: 'Leaderboard', icon: FiAward },
 ];
 
-const Sidebar = ({ mobileOpen, onCloseMobile }) => {
+const Sidebar = () => {
   const { user } = useAuth();
-  const [collapsed, setCollapsed] = useState(() => {
-    return localStorage.getItem('supportx_sidebar_collapsed') === 'true';
-  });
-
-  const toggleCollapse = () => {
-    setCollapsed((prev) => {
-      const next = !prev;
-      localStorage.setItem('supportx_sidebar_collapsed', String(next));
-      return next;
-    });
-  };
-
+  const [collapsed, setCollapsed] = useState(() => localStorage.getItem('supportx_sidebar_collapsed') === 'true');
   const links = user?.role === 'admin' ? ADMIN_LINKS : EMPLOYEE_LINKS;
 
-  return (
-    <>
-      {mobileOpen && (
-        <div
-          className="sidebar-mobile-backdrop"
-          onClick={onCloseMobile}
-          aria-hidden="true"
-        />
-      )}
-      <nav className={`sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`}>
-        <div className="sidebar-header">
-          <button
-            className="sidebar-toggle"
-            onClick={toggleCollapse}
-            title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-            aria-label={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-          >
-            {collapsed ? <FiChevronRight size={18} /> : <FiChevronLeft size={18} />}
-          </button>
-        </div>
+  useEffect(() => {
+    localStorage.setItem('supportx_sidebar_collapsed', String(collapsed));
+  }, [collapsed]);
 
-        <div className="sidebar-nav">
-          {links.map(({ to, label, icon: Icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              onClick={onCloseMobile}
-              className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
-              title={collapsed ? label : undefined}
-            >
-              <Icon size={18} className="sidebar-icon" />
-              <span className="sidebar-label">{label}</span>
-            </NavLink>
-          ))}
-        </div>
-      </nav>
-    </>
+  return (
+    <nav className={`sidebar${collapsed ? ' collapsed' : ''}`}>
+      <button
+        className="sidebar-collapse-btn"
+        onClick={() => setCollapsed((prev) => !prev)}
+        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+      >
+        {collapsed ? <FiChevronRight size={16} /> : <FiChevronLeft size={16} />}
+      </button>
+
+      {links.map(({ to, label, icon: Icon }) => (
+        <NavLink
+          key={to}
+          to={to}
+          className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
+          title={collapsed ? label : undefined}
+        >
+          <Icon size={18} />
+          <span className="sidebar-link-label">{label}</span>
+        </NavLink>
+      ))}
+    </nav>
   );
 };
 
 export default Sidebar;
-
-
