@@ -1,30 +1,34 @@
 import { useState, useEffect } from 'react';
 
-/**
- * Animates a number counting up from 0 to `target` over `duration` ms.
- * Used on stat cards so numbers feel alive instead of just appearing.
- */
-const useCountUp = (target, duration = 600) => {
-  const [value, setValue] = useState(0);
+const useCountUp = (target = 0, duration = 800) => {
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
-    let start = null;
-    let frameId;
+    const numTarget = typeof target === 'number' && !isNaN(target) ? target : 0;
+    if (numTarget === 0) {
+      setCount(0);
+      return;
+    }
 
-    const step = (timestamp) => {
-      if (start === null) start = timestamp;
-      const progress = Math.min((timestamp - start) / duration, 1);
-      setValue(Math.floor(progress * target));
-      if (progress < 1) {
-        frameId = requestAnimationFrame(step);
+    let start = 0;
+    const stepTime = 16;
+    const steps = duration / stepTime;
+    const increment = numTarget / steps;
+
+    const timer = setInterval(() => {
+      start += increment;
+      if ((increment > 0 && start >= numTarget) || (increment < 0 && start <= numTarget)) {
+        setCount(numTarget);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(start));
       }
-    };
+    }, stepTime);
 
-    frameId = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(frameId);
+    return () => clearInterval(timer);
   }, [target, duration]);
 
-  return value;
+  return count;
 };
 
 export default useCountUp;

@@ -32,6 +32,14 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
+  const updateUserState = (newData) => {
+    setUser((prev) => {
+      const merged = { ...prev, ...newData };
+      localStorage.setItem('supportx_user', JSON.stringify(merged));
+      return merged;
+    });
+  };
+
   const logout = () => {
     localStorage.removeItem('supportx_token');
     localStorage.removeItem('supportx_user');
@@ -39,7 +47,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, updateUserState, logout }}>
       {children}
     </AuthContext.Provider>
   );

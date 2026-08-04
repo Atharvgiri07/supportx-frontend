@@ -8,11 +8,17 @@ import {
   FiGrid,
   FiPlusCircle,
   FiFolder,
+  FiTag,
   FiUsers,
   FiList,
   FiCpu,
   FiChevronLeft,
   FiChevronRight,
+  FiCalendar,
+  FiBell,
+  FiMessageCircle,
+  FiActivity,
+  FiUser,
 } from 'react-icons/fi';
 import './Sidebar.css';
 
@@ -20,6 +26,10 @@ const EMPLOYEE_LINKS = [
   { to: '/tickets', label: 'My Tickets', icon: FiInbox },
   { to: '/performance', label: 'My Performance', icon: FiBarChart2 },
   { to: '/leaderboard', label: 'Leaderboard', icon: FiAward },
+  { to: '/calendar', label: 'Calendar', icon: FiCalendar },
+  { to: '/reminders', label: 'Reminders', icon: FiBell },
+  { to: '/chat', label: 'Chat', icon: FiMessageCircle },
+  { to: '/profile', label: 'My Profile', icon: FiUser },
 ];
 
 const ADMIN_LINKS = [
@@ -27,9 +37,13 @@ const ADMIN_LINKS = [
   { to: '/create-ticket', label: 'Create Ticket', icon: FiPlusCircle },
   { to: '/all-tickets', label: 'All Tickets', icon: FiList },
   { to: '/departments', label: 'Departments', icon: FiFolder },
+  { to: '/categories', label: 'Categories', icon: FiTag },
   { to: '/employees', label: 'Employees', icon: FiUsers },
   { to: '/ai-reports', label: 'AI Reports', icon: FiCpu },
   { to: '/leaderboard', label: 'Leaderboard', icon: FiAward },
+  { to: '/activity-logs', label: 'Activity Logs', icon: FiActivity },
+  { to: '/chat', label: 'Chat', icon: FiMessageCircle },
+  { to: '/profile', label: 'My Profile', icon: FiUser },
 ];
 
 const Sidebar = () => {

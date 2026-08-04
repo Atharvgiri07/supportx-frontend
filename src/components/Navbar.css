@@ -2,9 +2,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 24px;
+  padding: 12px 24px;
   background: var(--color-sidebar);
   color: white;
+  position: relative;
+  z-index: 100;
 }
 
 .navbar-brand {
@@ -20,25 +22,10 @@
 .navbar-user {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
-.navbar-name {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.navbar-role {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 3px 8px;
-  border-radius: 999px;
-}
-
-.navbar-theme-toggle,
-.navbar-logout {
+.navbar-theme-toggle {
   background: transparent;
   border: none;
   color: white;
@@ -46,14 +33,131 @@
   display: flex;
   align-items: center;
   opacity: 0.8;
-  transition: opacity 0.15s ease;
+  padding: 6px;
+  border-radius: 6px;
+  transition: opacity 0.15s ease, background 0.15s ease;
 }
 
-.navbar-theme-toggle:hover,
-.navbar-logout:hover {
+.navbar-theme-toggle:hover {
   opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.notification-bell-icon {
-  color: inherit;
+.navbar-profile-wrapper {
+  position: relative;
+}
+
+.navbar-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: background 0.15s ease;
+}
+
+.navbar-profile-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.navbar-avatar-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-primary);
+}
+
+.navbar-avatar-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.navbar-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.navbar-role {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+.navbar-caret {
+  transition: transform 0.2s ease;
+  opacity: 0.7;
+}
+
+.navbar-caret.open {
+  transform: rotate(180deg);
+}
+
+.navbar-profile-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 220px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  padding: 8px 0;
+  z-index: 1000;
+  animation: fadeSlideUp 0.15s ease;
+}
+
+.navbar-dropdown-header {
+  padding: 10px 16px;
+}
+
+.navbar-dropdown-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.navbar-dropdown-email {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.navbar-dropdown-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 6px 0;
+}
+
+.navbar-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.navbar-dropdown-item:hover {
+  background: var(--color-bg);
+  color: var(--color-primary);
+}
+
+.navbar-dropdown-item.danger:hover {
+  color: var(--color-danger);
 }

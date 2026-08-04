@@ -5,6 +5,7 @@ import './CreateTicket.css';
 
 const CreateTicket = () => {
   const [departments, setDepartments] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -16,11 +17,19 @@ const CreateTicket = () => {
   const [assignmentInfo, setAssignmentInfo] = useState('');
 
   useEffect(() => {
-    const fetchDepartments = async () => {
-      const { data } = await api.get('/departments');
-      setDepartments(data);
+    const fetchDropdownData = async () => {
+      try {
+        const [deptRes, catRes] = await Promise.all([
+          api.get('/departments'),
+          api.get('/categories')
+        ]);
+        setDepartments(Array.isArray(deptRes.data) ? deptRes.data : []);
+        setCategories(Array.isArray(catRes.data) ? catRes.data.filter(c => c.isActive !== false) : []);
+      } catch (err) {
+        console.error('Failed to fetch dropdown data:', err);
+      }
     };
-    fetchDepartments();
+    fetchDropdownData();
   }, []);
 
   const handleChange = (e) => {
@@ -44,7 +53,7 @@ const CreateTicket = () => {
   };
 
   return (
-    <div style={{ maxWidth: 560 }}>
+    <div style={{ maxWidth: 640 }}>
       <h1>Create Ticket</h1>
       <p style={{ color: 'var(--color-text-muted)', marginTop: 4, marginBottom: 24 }}>
         It'll be auto-assigned to whoever in the department has the lightest workload
@@ -58,56 +67,62 @@ const CreateTicket = () => {
             name="title"
             value={form.title}
             onChange={handleChange}
-            placeholder="Server not responding"
+            placeholder="e.g. Database connection pool timeout"
             required
           />
         </div>
 
         <div className="field">
           <label htmlFor="description">Description</label>
-          <input
+          <textarea
             id="description"
             name="description"
+            rows={4}
             value={form.description}
             onChange={handleChange}
-            placeholder="What's going wrong?"
+            placeholder="Describe what's going wrong, steps to reproduce, or error messages..."
             required
+            style={{ resize: 'vertical', minHeight: 90 }}
           />
         </div>
 
-        <div className="field">
-          <label htmlFor="category">Category</label>
-          <select id="category" name="category" value={form.category} onChange={handleChange} required>
-            <option value="" disabled>
-              Select a category
-            </option>
-            <option value="Engineering">Engineering</option>
-            <option value="Sales">Sales</option>
-            <option value="Billing">Billing</option>
-          </select>
-        </div>
-
-        <div className="field">
-          <label htmlFor="department">Department (who it gets assigned to)</label>
-          <select id="department" name="department" value={form.department} onChange={handleChange} required>
-            <option value="" disabled>
-              Select a department
-            </option>
-            {departments.map((dept) => (
-              <option key={dept._id} value={dept._id}>
-                {dept.name}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div className="field">
+            <label htmlFor="category">Category</label>
+            <select id="category" name="category" value={form.category} onChange={handleChange} required>
+              <option value="" disabled>
+                Select a category
               </option>
-            ))}
-          </select>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat.name}>
+                  {cat.icon || '🏷️'} {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="field">
+            <label htmlFor="department">Department (Workload Auto-assign)</label>
+            <select id="department" name="department" value={form.department} onChange={handleChange} required>
+              <option value="" disabled>
+                Select a department
+              </option>
+              {departments.map((dept) => (
+                <option key={dept._id} value={dept._id}>
+                  {dept.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="field">
           <label htmlFor="priority">Priority</label>
           <select id="priority" name="priority" value={form.priority} onChange={handleChange}>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-            <option value="Critical">Critical</option>
+            <option value="Low">Low (5 pts)</option>
+            <option value="Medium">Medium (10 pts)</option>
+            <option value="High">High (20 pts)</option>
+            <option value="Critical">Critical (30 pts)</option>
           </select>
         </div>
 
@@ -121,7 +136,7 @@ const CreateTicket = () => {
       </form>
 
       {assignmentInfo && (
-        <div className="card create-ticket-result">
+        <div className="card create-ticket-result" style={{ marginTop: 20, padding: 16 }}>
           <strong>Auto-assign result:</strong> {assignmentInfo}
         </div>
       )}

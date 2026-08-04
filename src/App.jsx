@@ -14,12 +14,18 @@ import MyTickets from './pages/employee/MyTickets';
 import TicketDetail from './pages/employee/TicketDetail';
 import MyPerformance from './pages/employee/MyPerformance';
 import Leaderboard from './pages/employee/Leaderboard';
+import Calendar from './pages/employee/Calendar';
+import Reminders from './pages/employee/Reminders';
+import Chat from './pages/Chat';
+import MyProfile from './pages/MyProfile';
 import Dashboard from './pages/admin/Dashboard';
 import CreateTicket from './pages/admin/CreateTicket';
 import Departments from './pages/admin/Departments';
+import Categories from './pages/admin/Categories';
 import Employees from './pages/admin/Employees';
 import AllTickets from './pages/admin/AllTickets';
 import AIReports from './pages/admin/AIReports';
+import ActivityLogs from './pages/admin/ActivityLogs';
 
 const AppShell = ({ children }) => {
   const { user } = useAuth();
@@ -91,6 +97,38 @@ function App() {
               }
             />
             <Route
+              path="/calendar"
+              element={
+                <ProtectedRoute>
+                  <Calendar />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reminders"
+              element={
+                <ProtectedRoute>
+                  <Reminders />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/chat"
+              element={
+                <ProtectedRoute>
+                  <Chat />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <MyProfile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/dashboard"
               element={
                 <ProtectedRoute adminOnly>
@@ -115,6 +153,14 @@ function App() {
               }
             />
             <Route
+              path="/categories"
+              element={
+                <ProtectedRoute adminOnly>
+                  <Categories />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/employees"
               element={
                 <ProtectedRoute adminOnly>
@@ -135,6 +181,14 @@ function App() {
               element={
                 <ProtectedRoute adminOnly>
                   <AIReports />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/activity-logs"
+              element={
+                <ProtectedRoute adminOnly>
+                  <ActivityLogs />
                 </ProtectedRoute>
               }
             />

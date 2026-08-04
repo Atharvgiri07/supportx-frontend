@@ -13,9 +13,9 @@ const NotificationBell = () => {
   const fetchNotifications = async () => {
     try {
       const response = await api.get('/notifications');
-      setNotifications(response.data.notifications || []);
+      setNotifications(Array.isArray(response.data?.notifications) ? response.data.notifications : []);
     } catch (error) {
-      console.error('Failed to fetch notifications:', error);
+      // Silent catch for background polling errors
     }
   };
 
@@ -79,8 +79,8 @@ const NotificationBell = () => {
 
   return (
     <div className="notification-bell" ref={dropdownRef}>
-      <div className="notification-bell-icon" onClick={() => setIsOpen(!isOpen)}>
-        <FiBell />
+      <div className="notification-bell-icon" onClick={() => setIsOpen(!isOpen)} title="Notifications">
+        <FiBell size={18} />
         {unreadCount > 0 && (
           <span className="notification-badge">
             {unreadCount > 99 ? '99+' : unreadCount}

@@ -4,7 +4,7 @@ import api from '../../utils/api';
 import Loader from '../../components/Loader';
 import StatusBadge from '../../components/StatusBadge';
 import useCountUp from '../../utils/useCountUp';
-import { FiAlertTriangle, FiClock, FiTrendingUp, FiAward } from 'react-icons/fi';
+import { FiAlertTriangle, FiInbox, FiClock, FiCheckCircle, FiUsers, FiFolder, FiAward } from 'react-icons/fi';
 import {
   BarChart,
   Bar,
@@ -19,6 +19,15 @@ import {
 } from 'recharts';
 import './Dashboard.css';
 
+const STAT_CONFIG = [
+  { key: 'totalTickets', label: 'Total Tickets', icon: FiInbox, color: '#3b82f6' },
+  { key: 'openTickets', label: 'Open / In Progress', icon: FiClock, color: '#f59e0b' },
+  { key: 'resolvedTickets', label: 'Resolved Tickets', icon: FiCheckCircle, color: '#10b981' },
+  { key: 'overdueTickets', label: 'Overdue Items', icon: FiAlertTriangle, color: '#ef4444' },
+  { key: 'totalEmployees', label: 'Employees', icon: FiUsers, color: '#8b5cf6' },
+  { key: 'totalDepartments', label: 'Departments', icon: FiFolder, color: '#ec4899' },
+];
+
 const PRIORITY_COLORS = {
   Low: '#94a3b8',
   Medium: '#3b82f6',
@@ -26,15 +35,15 @@ const PRIORITY_COLORS = {
   Critical: '#ef4444',
 };
 
-const StatCard = ({ label, value, icon: Icon, color, suffix = '' }) => {
+const StatCard = ({ label, value, icon: Icon, color }) => {
   const animated = useCountUp(typeof value === 'number' ? value : 0);
   return (
-    <div className="card dashboard-stat" style={{ borderLeft: color ? `4px solid ${color}` : undefined }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <p className="dashboard-stat-label" style={{ margin: 0 }}>{label}</p>
-        {Icon && <Icon color={color} size={18} />}
+    <div className="card dashboard-stat">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <p className="dashboard-stat-label">{label}</p>
+        {Icon && <Icon size={20} color={color} />}
       </div>
-      <h2 className="dashboard-stat-value">{typeof value === 'number' ? animated : value}{suffix}</h2>
+      <h2 className="dashboard-stat-value" style={{ color: color || 'var(--color-text)' }}>{animated}</h2>
     </div>
   );
 };
@@ -55,11 +64,14 @@ const Dashboard = () => {
         ]);
         setStats(statsRes.data);
         setChartData(chartRes.data);
+        const tList = Array.isArray(ticketsRes.data) ? ticketsRes.data : [];
         setUrgentTickets(
-          ticketsRes.data.filter(
+          tList.filter(
             (t) => t.priority === 'Critical' && t.status !== 'Resolved' && t.status !== 'Closed'
           )
         );
+      } catch (err) {
+        console.error('Failed to load dashboard data:', err);
       } finally {
         setLoading(false);
       }
@@ -71,20 +83,20 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h1>Dashboard</h1>
+      <h1>Admin Dashboard</h1>
       <p style={{ color: 'var(--color-text-muted)', marginTop: 4, marginBottom: 24 }}>
-        Overview of SupportX activity
+        Real-time analytics, SLA tracking, and ticket metrics
       </p>
 
       {urgentTickets.length > 0 && (
         <div className="card dashboard-urgent">
           <div className="dashboard-urgent-header">
-            <FiAlertTriangle size={18} />
-            <h3>Urgent &amp; Open ({urgentTickets.length})</h3>
+            <FiAlertTriangle size={18} color="var(--color-danger)" />
+            <h3>Urgent & Critical Tickets ({urgentTickets.length})</h3>
           </div>
           {urgentTickets.map((t) => (
             <Link key={t._id} to={`/tickets/${t._id}`} className="dashboard-urgent-item">
-              <span>{t.title}</span>
+              <span style={{ fontWeight: 600 }}>{t.title}</span>
               <span className="dashboard-urgent-right">
                 <StatusBadge status={t.status} />
                 <span className="dashboard-urgent-assignee">{t.assignedTo?.name || 'Unassigned'}</span>
@@ -95,29 +107,9 @@ const Dashboard = () => {
       )}
 
       <div className="dashboard-stats">
-        <StatCard label="Total Tickets" value={stats?.totalTickets ?? 0} />
-        <StatCard label="Open / In Progress" value={stats?.openTickets ?? 0} />
-        <StatCard label="Resolved" value={stats?.resolvedTickets ?? 0} />
-        
-        <StatCard 
-          label="Overdue Tickets" 
-          value={stats?.overdueTickets ?? 0} 
-          icon={FiAlertTriangle}
-          color="var(--color-danger)"
-        />
-        <StatCard 
-          label="Avg Resolution" 
-          value={stats?.avgResolutionTime ?? 0} 
-          suffix=" hrs"
-          icon={FiClock}
-          color="var(--color-primary)"
-        />
-        <StatCard 
-          label="Tickets Today" 
-          value={stats?.ticketsCreatedToday ?? 0} 
-          icon={FiTrendingUp}
-          color="var(--color-success)"
-        />
+        {STAT_CONFIG.map(({ key, label, icon, color }) => (
+          <StatCard key={key} label={label} value={stats?.[key] ?? 0} icon={icon} color={color} />
+        ))}
       </div>
 
       <div className="dashboard-charts">
@@ -125,11 +117,11 @@ const Dashboard = () => {
           <h3 style={{ marginBottom: 16 }}>Tickets by Status</h3>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={chartData?.byStatus || []}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
               <XAxis dataKey="_id" tick={{ fontSize: 12 }} />
               <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
               <Tooltip />
-              <Bar dataKey="count" fill="#3b82f6" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="count" fill="var(--color-primary)" radius={[6, 6, 0, 0]} name="Tickets" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -145,7 +137,7 @@ const Dashboard = () => {
                 cx="50%"
                 cy="50%"
                 outerRadius={90}
-                label={(entry) => entry._id}
+                label={(entry) => `${entry._id} (${entry.count})`}
               >
                 {(chartData?.byPriority || []).map((entry) => (
                   <Cell key={entry._id} fill={PRIORITY_COLORS[entry._id] || '#94a3b8'} />
@@ -160,43 +152,33 @@ const Dashboard = () => {
           <h3 style={{ marginBottom: 16 }}>Tickets by Department</h3>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={chartData?.byDepartment || []}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
               <XAxis dataKey="department" tick={{ fontSize: 12 }} />
               <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
               <Tooltip />
-              <Bar dataKey="count" fill="#1e293b" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="count" fill="#8b5cf6" radius={[6, 6, 0, 0]} name="Tickets" />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      <div className="card dashboard-performers" style={{ marginTop: '24px', marginBottom: '24px' }}>
-        <h3 style={{ marginBottom: 16 }}>Top Performers</h3>
-        <div className="performers-list">
-          {stats?.topPerformers?.length > 0 ? (
-            stats.topPerformers.map((emp, idx) => (
-              <div key={emp._id} className="performer-item">
-                <div className="performer-rank">
-                  {idx === 0 && <FiAward color="#fbbf24" size={24} />}
-                  {idx === 1 && <FiAward color="#9ca3af" size={24} />}
-                  {idx === 2 && <FiAward color="#b45309" size={24} />}
-                  {idx > 2 && <span>#{idx + 1}</span>}
-                </div>
-                <div className="performer-info">
-                  <p className="performer-name">{emp.name}</p>
-                  <p className="performer-dept">{emp.department?.name || 'No Department'}</p>
-                </div>
-                <div className="performer-stats">
-                  <span className="performer-score">{emp.performanceScore} pts</span>
-                  <span className="performer-resolved">{emp.totalResolved} resolved</span>
+      {stats?.topPerformers?.length > 0 && (
+        <div className="card" style={{ marginTop: 24, padding: 20 }}>
+          <h3 style={{ marginBottom: 16 }}><FiAward size={18} color="#eab308" /> Top Employee Performers</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
+            {stats.topPerformers.map((emp, index) => (
+              <div key={emp._id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12, borderRadius: 8, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-primary)' }}>#{index + 1}</span>
+                <div>
+                  <p style={{ fontWeight: 600, fontSize: 14 }}>{emp.name}</p>
+                  <p style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>{emp.department?.name || 'Employee'}</p>
+                  <p style={{ fontSize: 12, color: 'var(--color-success)', fontWeight: 600, marginTop: 2 }}>{emp.performanceScore} pts • {emp.totalResolved} resolved</p>
                 </div>
               </div>
-            ))
-          ) : (
-            <p style={{ color: 'var(--color-text-muted)', fontSize: 14 }}>No data available yet.</p>
-          )}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

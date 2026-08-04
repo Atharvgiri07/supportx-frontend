@@ -5,15 +5,15 @@ import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import StatusBadge from '../../components/StatusBadge';
 import PriorityBadge from '../../components/PriorityBadge';
+import StarRating from '../../components/StarRating';
 import Loader from '../../components/Loader';
-import { FiCheckCircle } from 'react-icons/fi';
+import { FiCheckCircle, FiArrowLeft, FiClock, FiSend } from 'react-icons/fi';
 import './TicketDetail.css';
 
 const TicketDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState('');
@@ -21,10 +21,20 @@ const TicketDetail = () => {
   const [posting, setPosting] = useState(false);
   const [resolving, setResolving] = useState(false);
 
+  const [rating, setRating] = useState(0);
+  const [feedback, setFeedback] = useState('');
+  const [submittingRating, setSubmittingRating] = useState(false);
+
   const fetchTicket = async () => {
     try {
       const { data } = await api.get(`/tickets/${id}`);
       setTicket(data);
+      if (data.customerRating) {
+        setRating(data.customerRating);
+      }
+      if (data.customerFeedback) {
+        setFeedback(data.customerFeedback);
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Could not load ticket');
     } finally {
@@ -57,7 +67,10 @@ const TicketDetail = () => {
     setResolving(true);
     try {
       const { data } = await api.put(`/tickets/${id}/resolve`);
-      toast.success(`Resolved — ${data.pointsAwarded} points awarded`);
+      toast.success(`Resolved — ${data.pointsAwarded || 0} points awarded`);
+      if (data.newBadges?.length) {
+        data.newBadges.forEach((badge) => toast.success(`🏅 Badge earned: ${badge.name}`));
+      }
       await fetchTicket();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Could not resolve ticket');
@@ -66,49 +79,30 @@ const TicketDetail = () => {
     }
   };
 
-  const handleStatusChange = async (e) => {
+  const handleRateSubmit = async (selectedRating) => {
+    const val = selectedRating || rating;
+    if (!val) return toast.warning('Please select a star rating first');
+    setSubmittingRating(true);
     try {
-      if (e.target.value === 'Resolved') {
-        handleResolve();
-        return;
-      }
-      await api.put(`/tickets/${id}/status`, { status: e.target.value });
-      toast.success('Status updated');
-      fetchTicket();
+      await api.put(`/tickets/${id}/rate`, { rating: val, feedback });
+      toast.success('Rating and feedback saved!');
+      await fetchTicket();
     } catch (err) {
-      toast.error('Could not update status');
-    }
-  };
-
-  const handleClose = async () => {
-    try {
-      await api.put(`/tickets/${id}/close`);
-      toast.success('Ticket closed');
-      fetchTicket();
-    } catch (err) {
-      toast.error('Could not close ticket');
-    }
-  };
-
-  const handleReopen = async () => {
-    try {
-      await api.put(`/tickets/${id}/reopen`);
-      toast.warning('Ticket reopened. Points have been reversed.');
-      fetchTicket();
-    } catch (err) {
-      toast.error('Could not reopen ticket');
+      toast.error(err.response?.data?.message || 'Could not save rating');
+    } finally {
+      setSubmittingRating(false);
     }
   };
 
   if (loading) return <Loader />;
-  if (!ticket) return <p>Ticket not found.</p>;
+  if (!ticket) return <p className="error-text" style={{ padding: 32 }}>Ticket not found.</p>;
 
   const isResolved = ticket.status === 'Resolved' || ticket.status === 'Closed';
 
   return (
     <div className="ticket-detail">
-      <button className="ticket-detail-back" onClick={() => navigate(-1)}>
-        ← Back
+      <button className="btn btn-secondary btn-sm ticket-detail-back" onClick={() => navigate(-1)}>
+        <FiArrowLeft size={16} /> Back
       </button>
 
       <div className="card ticket-detail-header">
@@ -117,40 +111,15 @@ const TicketDetail = () => {
           <div className="ticket-card-badges">
             <PriorityBadge priority={ticket.priority} />
             <StatusBadge status={ticket.status} />
-            {ticket.isOverdue && <span className="badge-overdue">OVERDUE</span>}
           </div>
         </div>
         <p className="ticket-detail-desc">{ticket.description}</p>
         <div className="ticket-detail-meta">
-          <span>Department: {ticket.department?.name}</span>
-          <span>Created: {new Date(ticket.createdAt).toLocaleString()}</span>
-          {ticket.dueDate && (
-            <span>
-              Due: {new Date(ticket.dueDate).toLocaleString()} 
-              {ticket.slaHours ? ` (${ticket.slaHours}h SLA)` : ''}
-            </span>
-          )}
+          <span><strong>Category:</strong> {ticket.category || 'General'}</span>
+          <span><strong>Department:</strong> {ticket.department?.name || 'Unassigned'}</span>
+          <span><strong>Assigned To:</strong> {ticket.assignedTo?.name || 'Unassigned'}</span>
+          <span><strong>Created:</strong> {new Date(ticket.createdAt).toLocaleString()}</span>
         </div>
-
-        {isAdmin && ticket.status !== 'Closed' && (
-          <div className="admin-status-controls" style={{ marginTop: 16 }}>
-            <label>Change Status: </label>
-            <select value={ticket.status} onChange={handleStatusChange} className="status-select">
-              <option value="Open">Open</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Pending">Pending</option>
-              <option value="Resolved">Resolved</option>
-            </select>
-          </div>
-        )}
-        {isAdmin && (ticket.status === 'Resolved' || ticket.status === 'Closed') && (
-          <div className="admin-actions" style={{ marginTop: 8, display: 'flex', gap: '8px' }}>
-            {ticket.status === 'Resolved' && (
-              <button className="btn btn-secondary" onClick={handleClose}>Close Ticket</button>
-            )}
-            <button className="btn btn-secondary" onClick={handleReopen}>Reopen Ticket</button>
-          </div>
-        )}
 
         {!isResolved && (
           <button
@@ -162,45 +131,59 @@ const TicketDetail = () => {
             {resolving ? 'Resolving…' : 'Mark as Resolved'}
           </button>
         )}
-        {isResolved && ticket.pointsAwarded > 0 && (
-          <div className="points-breakdown" style={{ marginTop: 16, padding: '12px', backgroundColor: 'var(--color-bg-body)', borderRadius: '6px' }}>
-            <p style={{ color: 'var(--color-success)', fontWeight: 600, margin: '0 0 8px 0' }}>
-              ✓ Resolved — {ticket.pointsAwarded} points awarded
+
+        {isResolved && (
+          <div className="ticket-resolution-banner" style={{ marginTop: 16, padding: '12px 16px', background: 'var(--color-primary-tint)', borderRadius: 8 }}>
+            <p style={{ color: 'var(--color-success)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <FiCheckCircle size={18} /> Ticket Resolved — {ticket.pointsAwarded || 0} points awarded
             </p>
-            {ticket.pointsBreakdown && (
-              <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
-                {ticket.pointsBreakdown.base > 0 && <li>Base: {ticket.pointsBreakdown.base}</li>}
-                {ticket.pointsBreakdown.priorityBonus > 0 && <li>Priority Bonus: {ticket.pointsBreakdown.priorityBonus}</li>}
-                {ticket.pointsBreakdown.speedBonus > 0 && <li>Speed Bonus: {ticket.pointsBreakdown.speedBonus}</li>}
-                {ticket.pointsBreakdown.penalty > 0 && <li style={{ color: 'var(--color-danger)' }}>Penalty: -{ticket.pointsBreakdown.penalty}</li>}
-              </ul>
+          </div>
+        )}
+
+        {isResolved && (
+          <div className="ticket-detail-rating-card" style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid var(--color-border)' }}>
+            <h4 style={{ marginBottom: 8 }}>⭐ Resolution Rating & Feedback</h4>
+            {ticket.customerRating ? (
+              <div style={{ marginTop: 8 }}>
+                <StarRating value={ticket.customerRating} readOnly />
+                {ticket.customerFeedback && (
+                  <p style={{ marginTop: 8, fontStyle: 'italic', color: 'var(--color-text-muted)', fontSize: 14 }}>
+                    "{ticket.customerFeedback}"
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div style={{ marginTop: 12 }}>
+                <StarRating value={rating} onChange={(val) => { setRating(val); handleRateSubmit(val); }} readOnly={submittingRating} />
+                <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
+                  <input
+                    type="text"
+                    placeholder="Optional feedback comment..."
+                    value={feedback}
+                    onChange={(e) => setFeedback(e.target.value)}
+                    style={{
+                      flex: 1,
+                      padding: '8px 12px',
+                      borderRadius: 8,
+                      border: '1px solid var(--color-border)',
+                      background: 'var(--color-surface)',
+                      color: 'var(--color-text)',
+                      fontSize: 14,
+                      outline: 'none',
+                    }}
+                  />
+                  <button className="btn btn-primary btn-sm" onClick={() => handleRateSubmit(rating)} disabled={submittingRating || rating === 0}>
+                    Save Feedback
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         )}
       </div>
 
-      {ticket.history && ticket.history.length > 0 && (
-        <div className="card ticket-detail-history">
-          <h3 style={{ marginBottom: 16 }}>History</h3>
-          <div className="history-timeline">
-            {ticket.history.map((entry, idx) => (
-              <div key={idx} className="history-entry">
-                <div className="history-dot"></div>
-                <div className="history-content">
-                  <div className="history-date">{new Date(entry.createdAt).toLocaleString()}</div>
-                  <div className="history-desc">
-                    <strong>{entry.changedBy?.name}</strong> changed status from <em>{entry.oldStatus}</em> to <em>{entry.newStatus}</em>
-                  </div>
-                  {entry.notes && <div className="history-notes">{entry.notes}</div>}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       <div className="card ticket-detail-comments">
-        <h3 style={{ marginBottom: 16 }}>Comments</h3>
+        <h3 style={{ marginBottom: 16 }}>Comments ({ticket.comments?.length || 0})</h3>
 
         {ticket.comments?.length === 0 && (
           <p style={{ color: 'var(--color-text-muted)', fontSize: 14 }}>No comments yet.</p>
@@ -209,7 +192,7 @@ const TicketDetail = () => {
         {ticket.comments?.map((comment) => (
           <div key={comment._id} className={`comment${comment.isResolution ? ' comment-resolution' : ''}`}>
             <div className="comment-author">
-              {comment.user?.name}
+              <span>{comment.user?.name || 'User'}</span>
               {comment.isResolution && (
                 <span className="comment-resolution-tag">
                   <FiCheckCircle size={12} /> Resolution
@@ -220,57 +203,46 @@ const TicketDetail = () => {
           </div>
         ))}
 
-        <form onSubmit={handleAddComment} style={{ marginTop: 16 }}>
+        <form onSubmit={handleAddComment} style={{ marginTop: 20 }}>
           <div className="field">
             <label htmlFor="comment">Add a comment</label>
-            <div className="ai-reply-suggestions">
-              <span className="ai-suggestion-title">AI Reply Suggestions:</span>
-              <button
-                type="button"
-                className="ai-suggestion-chip"
-                onClick={() => setCommentText('Investigating logs and reproducing reported issue.')}
-              >
-                🔍 Investigating
-              </button>
-              <button
-                type="button"
-                className="ai-suggestion-chip"
-                onClick={() => setCommentText('Fix deployed to staging environment. Awaiting verification.')}
-              >
-                🛠️ Fix Deployed
-              </button>
-              <button
-                type="button"
-                className="ai-suggestion-chip"
-                onClick={() => {
-                  setCommentText('Root cause identified and resolved successfully.');
-                  setIsResolutionComment(true);
-                }}
-              >
-                ✅ Resolution Note
-              </button>
-            </div>
             <input
               id="comment"
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              placeholder="What did you do to resolve this?"
+              placeholder="Type your comment or update notes..."
             />
           </div>
-          <label className="comment-resolution-checkbox">
-            <input
-              type="checkbox"
-              checked={isResolutionComment}
-              onChange={(e) => setIsResolutionComment(e.target.checked)}
-            />
-            This comment resolves the ticket
-          </label>
-          <button type="submit" className="btn btn-primary" disabled={posting}>
-            {posting ? 'Posting…' : 'Add Comment'}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
+            <label className="comment-resolution-checkbox" style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13 }}>
+              <input
+                type="checkbox"
+                checked={isResolutionComment}
+                onChange={(e) => setIsResolutionComment(e.target.checked)}
+              />
+              Mark as official resolution note
+            </label>
+            <button type="submit" className="btn btn-primary" disabled={posting || !commentText.trim()}>
+              <FiSend size={15} /> {posting ? 'Posting…' : 'Add Comment'}
+            </button>
+          </div>
         </form>
-
       </div>
+
+      {ticket.history?.length > 0 && (
+        <div className="card ticket-detail-history" style={{ marginTop: 24, padding: 20 }}>
+          <h3 style={{ marginBottom: 16 }}><FiClock size={16} /> Status History Timeline</h3>
+          <div className="history-list" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {ticket.history.map((h) => (
+              <div key={h._id} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontSize: 13, borderBottom: '1px solid var(--color-border)', paddingBottom: 8 }}>
+                <span style={{ fontWeight: 600, color: 'var(--color-text)' }}>{h.changedBy?.name || 'System'}:</span>
+                <span style={{ flex: 1, color: 'var(--color-text-muted)' }}>{h.notes || `Status changed from ${h.oldStatus} to ${h.newStatus}`}</span>
+                <span style={{ fontSize: 11, color: 'var(--color-text-muted)' }}>{new Date(h.createdAt).toLocaleString()}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

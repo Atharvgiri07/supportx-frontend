@@ -63,17 +63,3 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
-
-@media (max-width: 768px) {
-  .employees-table th:nth-child(3),
-  .employees-table td:nth-child(3),
-  .employees-table th:nth-child(4),
-  .employees-table td:nth-child(4) {
-    display: none;
-  }
-  .employees-table th,
-  .employees-table td {
-    padding: 10px 8px;
-    font-size: 13px;
-  }
-}
